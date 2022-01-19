@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/ou-ui",
         "index": "apps/ou-ui/src/index.html",
@@ -14,8 +16,19 @@
         "polyfills": "apps/ou-ui/src/polyfills.ts",
         "tsConfig": "apps/ou-ui/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
-        "assets": ["apps/ou-ui/src/favicon.ico", "apps/ou-ui/src/assets"],
-        "styles": ["apps/ou-ui/src/styles.scss"],
+        "assets": [
+          "apps/ou-ui/src/favicon.ico",
+          "apps/ou-ui/src/assets",
+          {
+            "glob": "**/*",
+            "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+            "output": "/assets/"
+          }
+        ],
+        "styles": [
+          "./node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
+          "apps/ou-ui/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -80,7 +93,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/ou-ui"],
+      "outputs": [
+        "coverage/apps/ou-ui"
+      ],
       "options": {
         "jestConfig": "apps/ou-ui/jest.config.js",
         "passWithNoTests": true

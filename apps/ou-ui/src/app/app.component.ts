@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'nx-optimistic-state-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ou-ui';
+  isCollapsed = false;
 }
