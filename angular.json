@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "projects": {
+    "ou-ui": "apps/ou-ui",
+    "ou-ui-e2e": "apps/ou-ui-e2e"
+  }
+}
