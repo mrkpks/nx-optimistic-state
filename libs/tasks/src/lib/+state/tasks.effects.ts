@@ -13,7 +13,33 @@ export class TasksEffects {
       fetch({
         run: (action) => {
           // Your custom service 'load' logic goes here. For now just return a success action...
-          return TasksActions.loadTasksSuccess({ tasks: [] });
+          return TasksActions.loadTasksSuccess({ tasks: [
+              {
+                id: '01',
+                name: 'Foo',
+                status: 'todo',
+              },
+              {
+                id: '02',
+                name: 'Bar',
+                status: 'inProgress',
+              },
+              {
+                id: '03',
+                name: 'Wololo',
+                status: 'blocked',
+              },
+              {
+                id: '04',
+                name: 'Task 04',
+                status: 'done',
+              },
+              {
+                id: '05',
+                name: 'Yolo',
+                status: 'inProgress',
+              },
+            ] });
         },
         onError: (action, error) => {
           console.error('Error', error);

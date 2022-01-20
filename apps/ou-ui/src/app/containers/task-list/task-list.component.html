@@ -1,0 +1,95 @@
+<nz-table
+  #tasksTable
+  [nzData]="(allTasks$ | async) || []"
+  [nzFrontPagination]="false"
+  [nzNoResult]="noResult"
+>
+  <thead>
+    <tr>
+      <th nzAlign="center">ID</th>
+      <th nzAlign="center">Name</th>
+      <th nzAlign="center">Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let task of tasksTable.data"
+      class="task-row"
+      (click)="goToDetail(task.id)"
+    >
+      <td nzAlign="center" nzBreakWord>{{ task.id }}</td>
+      <td nzAlign="center" nzBreakWord>{{ task.name }}</td>
+      <td nzAlign="center">
+        <div class="status-dot-wrapper">
+          <div class="status-dot" [ngClass]="getStatusColor(task.status)">
+            <div
+              class="tooltip-area"
+              nz-tooltip
+              [nzTooltipTitle]="task.status || 'todo'"
+            ></div>
+          </div>
+        </div>
+      </td>
+      <td nzAlign="center">
+        <button
+          nz-button
+          nz-popover
+          [nzPopoverContent]="moreOptions"
+          (click)="changeSelectedId($event, task.id)"
+          nzPopoverTrigger="click"
+          nzType="link"
+          nzSize="large"
+        >
+          <i nz-icon nzType="more"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<ng-template #moreOptions>
+  <div class="more-options">
+    <button
+      nz-popconfirm
+      nzPopconfirmTitle="Are you sure?"
+      nzCancelText="Cancel"
+      nzOkText="OK"
+      nzPopconfirmPlacement="bottom"
+      nz-button
+      nzType="link"
+      (nzOnConfirm)="deleteTask()"
+    >
+      Delete task (wait for BE)
+    </button>
+    <button
+      nz-popconfirm
+      nzPopconfirmTitle="Are you sure?"
+      nzCancelText="Cancel"
+      nzOkText="OK"
+      nzPopconfirmPlacement="bottom"
+      nz-button
+      nzType="link"
+      (nzOnConfirm)="deleteTaskOptimistic()"
+    >
+      Delete task (optimistic)
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #noResult>
+  <nz-empty
+    nzNotFoundImage="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+    [nzNotFoundContent]="contentTpl"
+    [nzNotFoundFooter]="footerTpl"
+  >
+    <ng-template #contentTpl>
+      <span>No tasks found!</span>
+    </ng-template>
+    <ng-template #footerTpl>
+      <button nz-button nzType="primary" (click)="addTask()">
+        Let's create one!
+      </button>
+    </ng-template>
+  </nz-empty>
+</ng-template>

@@ -21,6 +21,8 @@ export const tasksAdapter: EntityAdapter<TasksEntity> =
 
 export const initialState: State = tasksAdapter.getInitialState({
   // set initial required properties
+  ids: [],
+  entities: {},
   loaded: false,
 });
 
