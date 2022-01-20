@@ -1,0 +1,26 @@
+{
+  "projectType": "library",
+  "root": "libs/tasks",
+  "sourceRoot": "libs/tasks/src",
+  "prefix": "nx-optimistic-state",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/tasks"],
+      "options": {
+        "jestConfig": "libs/tasks/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/tasks/src/**/*.ts",
+          "libs/tasks/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
