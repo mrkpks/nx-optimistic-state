@@ -24,4 +24,16 @@ export class TasksFacade {
   init() {
     this.store.dispatch(TasksActions.init());
   }
+
+  createTask(name: string): void {
+    this.store.dispatch(TasksActions.createTask({ name }));
+  }
+
+  deleteTask(id: string): void {
+    this.store.dispatch(TasksActions.deleteTask({ id }));
+  }
+
+  deleteTaskOptimistic(id: string): void {
+    this.store.dispatch(TasksActions.deleteTaskOptimistic({ id }));
+  }
 }

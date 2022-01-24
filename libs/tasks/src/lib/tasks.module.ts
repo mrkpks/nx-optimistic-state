@@ -5,6 +5,7 @@ import { EffectsModule } from '@ngrx/effects';
 import * as fromTasks from './+state/tasks.reducer';
 import { TasksEffects } from './+state/tasks.effects';
 import { TasksFacade } from './+state/tasks.facade';
+import { TasksFakeApiService } from './tasks-fake-api.service';
 
 @NgModule({
   imports: [
@@ -12,6 +13,6 @@ import { TasksFacade } from './+state/tasks.facade';
     StoreModule.forFeature(fromTasks.TASKS_FEATURE_KEY, fromTasks.reducer),
     EffectsModule.forFeature([TasksEffects]),
   ],
-  providers: [TasksFacade],
+  providers: [TasksFacade, TasksFakeApiService],
 })
 export class TasksModule {}
