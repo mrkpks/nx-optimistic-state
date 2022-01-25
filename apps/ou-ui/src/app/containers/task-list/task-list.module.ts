@@ -12,6 +12,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
     NzPopoverModule,
     NzIconModule,
     NzPopconfirmModule,
+    NzSpinModule,
   ],
   declarations: [TaskListComponent],
   exports: [TaskListComponent],

@@ -12,6 +12,7 @@ export class TaskListComponent {
     undefined
   );
   readonly allTasks$ = this.tasksFacade.allTasks$;
+  readonly tasksLoaded$ = this.tasksFacade.loaded$;
 
   constructor(private readonly tasksFacade: TasksFacade) {
     this.tasksFacade.init();
