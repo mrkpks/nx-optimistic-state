@@ -57,17 +57,16 @@ export class TasksFakeApiService {
     }
   }
 
-  deleteTask(
-    id: string,
-    fakeProcessTime = 5000
-  ): Observable<string> {
-    const deleteSuccess = Math.random() > 0.3;
+  deleteTask(id: string, fakeProcessTime = 5000): Observable<string> {
+    const deleteSuccess = Math.random() > 0.5;
     if (deleteSuccess) {
       return of(id).pipe(delay(fakeProcessTime));
     } else {
-      throw throwError(() => 'Could not delete task').pipe(
-        delay(fakeProcessTime)
+      console.warn('Brace yourself, API will throw an error');
+      const throwingObservable = throwError(
+        () => 'API ERROR: Could not delete task'
       );
+      return timer(fakeProcessTime).pipe(mergeMap(() => throwingObservable));
     }
   }
 }

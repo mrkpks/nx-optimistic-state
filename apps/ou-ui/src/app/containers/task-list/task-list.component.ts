@@ -77,7 +77,10 @@ export class TaskListComponent {
   }
 
   deleteTaskOptimistic(): void {
-    // TODO
+    const id = this.selectedId$.value;
+    if (id) {
+      this.tasksFacade.deleteTaskOptimistic(id);
+    }
   }
 
   changeSelectedId(event: Event, id: string): void {

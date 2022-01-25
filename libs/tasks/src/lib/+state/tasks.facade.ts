@@ -47,6 +47,12 @@ export class TasksFacade {
   }
 
   deleteTaskOptimistic(id: string): void {
-    this.store.dispatch(TasksActions.deleteTaskOptimistic({ id }));
+    this.store
+      .pipe(select(TasksSelectors.getTaskById(id)), take(1))
+      .subscribe((task) => {
+        if (task) {
+          this.store.dispatch(TasksActions.deleteTaskOptimistic({ task }));
+        }
+      });
   }
 }

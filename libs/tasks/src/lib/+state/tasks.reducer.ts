@@ -71,18 +71,18 @@ const tasksReducer = createReducer(
     loaded: false,
     error: null,
   })),
-  on(TasksActions.deleteTaskOptimistic, (state) => ({
-    ...state,
-    loaded: false,
-    error: null,
-  })),
+  on(TasksActions.deleteTaskOptimistic, (state, { task }) =>
+    tasksAdapter.removeOne(task.id, { ...state, loaded: true })),
   on(TasksActions.deleteTaskSuccess, (state, { id }) =>
     tasksAdapter.removeOne(id, { ...state, loaded: true })
   ),
   on(TasksActions.deleteTaskFailure, (state, { error }) => ({
     ...state,
     error,
-  })), // todo: set loaded?
+  })), // todo: set loaded: true when error handling ready
+  on(TasksActions.undoDeleteTask, (state, { task }) =>
+    tasksAdapter.setOne(task, { ...state, loaded: true })
+  ),
 );
 
 export function reducer(state: State | undefined, action: Action) {

@@ -90,6 +90,23 @@ export class TasksEffects {
   //   )
   // );
 
+  deleteTaskOptimistic$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.deleteTaskOptimistic),
+      optimisticUpdate({
+        run: ({ task }) =>
+          this.fakeAPI.deleteTask(task.id).pipe(switchMap(() => EMPTY)),
+        undoAction: ({ task }, error) => {
+          console.error('Error deleteTask$: ', error); // todo call notification service
+          return TasksActions.undoDeleteTask({
+            error,
+            task,
+          });
+        },
+      })
+    )
+  );
+
   constructor(
     private readonly actions$: Actions,
     private readonly fakeAPI: TasksFakeApiService

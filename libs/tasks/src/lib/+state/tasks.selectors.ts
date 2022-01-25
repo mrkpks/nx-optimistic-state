@@ -34,3 +34,8 @@ export const getSelected = createSelector(
   getSelectedId,
   (entities, selectedId) => (selectedId ? entities[selectedId] : undefined)
 );
+
+export const getTaskById = (id: string) => createSelector(
+  getTasksEntities,
+  (entities) => entities[id]
+)

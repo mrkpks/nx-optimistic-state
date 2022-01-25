@@ -51,7 +51,7 @@ export const deleteTask = createAction(
 
 export const deleteTaskOptimistic = createAction(
   'Tasks/API Delete Task Optimistic',
-  props<{ id: string }>()
+  props<{ task: TasksEntity }>()
 );
 
 export const deleteTaskSuccess = createAction(
@@ -63,3 +63,11 @@ export const deleteTaskFailure = createAction(
   'Tasks/API Delete Task Failure',
   props<{ error: any }>()
 );
+
+export const undoDeleteTask = createAction(
+  'Tasks/API Delete Task Optimistic Failure',
+  props<{ error: any, task: TasksEntity }>() // task to revert
+);
+
+// TODO: add edit actions
+// !!! editTaskOptimisticFailure should need the whole entity in action to revert edited fields
