@@ -50,6 +50,88 @@
   </tbody>
 </nz-table>
 
+<button
+  *ngIf="tasksLoaded$ | async"
+  class="open-drawer-btn"
+  nz-button
+  nzType="primary"
+  (click)="openCreateDrawer()"
+>
+  +
+</button>
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzMaskClosable]="false"
+  nzPlacement="bottom"
+  [nzVisible]="createDrawerVisible"
+  nzTitle="Create task"
+  [nzFooter]="footerTpl"
+  (nzOnClose)="closeCreateDrawer()"
+>
+  <form nz-form *nzDrawerContent [formGroup]="taskForm">
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Name</nz-form-label>
+          <nz-form-control>
+            <input
+              [formControlName]="TaskFormField.Name"
+              nz-input
+              placeholder="please enter task name"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Status</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              [formControlName]="TaskFormField.Status"
+              nzPlaceHolder="select status"
+            >
+              <nz-option
+                *ngFor="let status of taskStatuses"
+                [nzValue]="status"
+                [nzLabel]="status"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button
+        nz-button
+        style="margin-right: 16px"
+        (click)="closeCreateDrawer()"
+      >
+        Cancel
+      </button>
+      <button
+        [disabled]="taskForm.invalid"
+        nz-button
+        nzType="primary"
+        style="margin-right: 8px"
+        (click)="createTask()"
+      >
+        Create
+      </button>
+      <button
+        [disabled]="taskForm.invalid"
+        nz-button
+        nzType="primary"
+        (click)="createTaskOptimistic()"
+      >
+        Create optimistic
+      </button>
+    </div>
+  </ng-template>
+</nz-drawer>
+
 <ng-template #moreOptions>
   <div class="more-options">
     <button
@@ -93,7 +175,7 @@
       <span>No tasks found!</span>
     </ng-template>
     <ng-template #footerTpl>
-      <button nz-button nzType="primary" (click)="addTask()">
+      <button nz-button nzType="primary" (click)="openCreateDrawer()">
         Let's create one!
       </button>
     </ng-template>

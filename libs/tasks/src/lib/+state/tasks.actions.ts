@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { TasksEntity } from './tasks.models';
+import {TasksEntity, TaskStatus} from './tasks.models';
 
 export const init = createAction('[Tasks Page] Init');
 
@@ -13,15 +13,9 @@ export const loadTasksFailure = createAction(
   props<{ error: any }>()
 );
 
-// todo: add more fields for create actions if needed
 export const createTask = createAction(
   'Tasks/API Create Task',
-  props<{ name: string }>()
-);
-
-export const createTaskOptimistic = createAction(
-  'Tasks/API Create Task Optimistic',
-  props<{ name: string }>()
+  props<{ name: string, status?: TaskStatus }>()
 );
 
 export const createTaskSuccess = createAction(
@@ -32,6 +26,22 @@ export const createTaskSuccess = createAction(
 export const createTaskFailure = createAction(
   'Tasks/API Create Task Failure',
   props<{ error: any }>()
+);
+
+export const createTaskOptimistic = createAction(
+  'Tasks/API Create Task Optimistic',
+  props<{ task: TasksEntity }>()
+);
+
+export const createTaskOptimisticSuccess = createAction(
+  'Tasks/API Create Task Optimistic Success',
+  // OID - ID created on FE, to be replaced in store
+  props<{ OID: string, task: TasksEntity }>()
+);
+
+export const undoCreateTask = createAction(
+  'Tasks/API Create Task Optimistic Failure',
+  props<{ error: any, id: string }>() // either whole entity or ID to revert (remove from state)
 );
 
 export const deleteTask = createAction(

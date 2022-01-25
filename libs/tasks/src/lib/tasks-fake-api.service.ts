@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TasksEntity } from '@nx-optimistic-state/tasks';
-import { delay, Observable, of, throwError } from 'rxjs';
+import { TasksEntity, TaskStatus } from '@nx-optimistic-state/tasks';
+import { delay, mergeMap, Observable, of, throwError, timer } from 'rxjs';
 
 @Injectable()
 export class TasksFakeApiService {
@@ -9,48 +9,51 @@ export class TasksFakeApiService {
       {
         id: '01',
         name: 'Foo',
-        status: 'todo' as const,
+        status: TaskStatus.Todo,
       },
       {
         id: '02',
         name: 'Bar',
-        status: 'inProgress' as const,
+        status: TaskStatus.InProgress,
       },
       {
         id: '03',
         name: 'Wololo',
-        status: 'blocked' as const,
+        status: TaskStatus.Blocked,
       },
       {
         id: '04',
         name: 'Task 04',
-        status: 'done' as const,
+        status: TaskStatus.Done,
       },
       {
         id: '05',
         name: 'Yolo',
-        status: 'inProgress' as const,
+        status: TaskStatus.InProgress,
       },
     ]).pipe(delay(2500));
   }
 
   createTask(
     name: string,
+    status?: TaskStatus,
     fakeProcessTime = 5000
   ): Observable<TasksEntity> {
-    const id = `${name}-${Math.random() * 1000}`;
+    const id = `${name}-${Math.floor(Math.random() * 1000)}`;
 
-    const createSuccess = Math.random() > 0.3;
+    const createSuccess = Math.random() > 0.5;
     if (createSuccess) {
       return of({
         id,
         name,
-        status: 'todo' as const,
+        status: status ?? TaskStatus.Todo,
       }).pipe(delay(fakeProcessTime));
     } else {
-      throw throwError(() => 'Could not create task').pipe(
-        delay(fakeProcessTime)
+      console.warn('Brace yourself, API will throw an error');
+      const throwingObservable = throwError(
+        () => 'API ERROR: Could not create task'
       );
+      return timer(fakeProcessTime).pipe(mergeMap(() => throwingObservable));
     }
   }
 

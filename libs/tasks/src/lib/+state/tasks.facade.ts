@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { select, Store, Action } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 
 import * as TasksActions from './tasks.actions';
 import * as TasksFeature from './tasks.reducer';
 import * as TasksSelectors from './tasks.selectors';
+import { TaskStatus } from './tasks.models';
+import { take } from 'rxjs';
 
 @Injectable()
 export class TasksFacade {
@@ -25,12 +27,19 @@ export class TasksFacade {
     this.store.dispatch(TasksActions.init());
   }
 
-  createTask(name: string): void {
-    this.store.dispatch(TasksActions.createTask({ name }));
+  createTask(name: string, status?: TaskStatus): void {
+    this.store.dispatch(TasksActions.createTask({ name, status }));
   }
 
-  createTaskOptimistic(name: string): void {
-    this.store.dispatch(TasksActions.createTaskOptimistic({ name }));
+  createTaskOptimistic(name: string, status?: TaskStatus): void {
+    const optimisticId = `OPTIMISITC_${name}-${Math.floor(
+      Math.random() * 1000
+    )}`;
+    this.store.dispatch(
+      TasksActions.createTaskOptimistic({
+        task: { id: optimisticId, name, status },
+      })
+    );
   }
 
   deleteTask(id: string): void {

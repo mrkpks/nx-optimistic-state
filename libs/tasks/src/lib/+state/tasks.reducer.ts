@@ -36,23 +36,36 @@ const tasksReducer = createReducer(
     ...state,
     error,
   })),
+  // WAIT FOR BE WHEN CREATING TASK
   on(TasksActions.createTask, (state) => ({
     ...state,
     loaded: false,
     error: null,
   })),
-  on(TasksActions.createTaskOptimistic, (state) => ({
-    ...state,
-    loaded: false,
-    error: null,
-  })), // todo: loaded: true?
   on(TasksActions.createTaskSuccess, (state, { task }) =>
     tasksAdapter.setOne(task, { ...state, loaded: true })
   ),
   on(TasksActions.createTaskFailure, (state, { error }) => ({
     ...state,
     error,
-  })), // todo: set loaded?
+  })), // todo: set loaded: true when error handling ready
+  // OPTIMISTIC UX WHEN CREATING TASK
+  on(TasksActions.createTaskOptimistic, (state, { task }) =>
+    tasksAdapter.setOne(task, { ...state, loaded: true })
+  ),
+  // on(TasksActions.createTaskOptimisticSuccess, (state, { OID, task }) =>
+  //   // needs to update ID (and potentially other data coming from BE)
+  //   {
+  //     console.log('createTaskOptimisticSuccess: ', OID, task.id);
+  //     return tasksAdapter.updateOne(
+  //       { id: OID, changes: task },
+  //       { ...state, loaded: true }
+  //     );
+  //   }
+  // ),
+  on(TasksActions.undoCreateTask, (state, { id }) =>
+    tasksAdapter.removeOne(id, { ...state, loaded: true })
+  ),
   on(TasksActions.deleteTask, (state) => ({
     ...state,
     loaded: false,

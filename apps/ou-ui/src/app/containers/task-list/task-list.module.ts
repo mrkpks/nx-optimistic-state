@@ -13,6 +13,12 @@ import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { ReactiveFormsModule } from '@angular/forms';
+import {NzSelectModule} from "ng-zorro-antd/select";
 
 @NgModule({
   imports: [
@@ -26,6 +32,12 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzIconModule,
     NzPopconfirmModule,
     NzSpinModule,
+    NzDrawerModule,
+    NzGridModule,
+    NzFormModule,
+    NzInputModule,
+    ReactiveFormsModule,
+    NzSelectModule,
   ],
   declarations: [TaskListComponent],
   exports: [TaskListComponent],
