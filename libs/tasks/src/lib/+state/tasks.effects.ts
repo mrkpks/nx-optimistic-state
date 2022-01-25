@@ -4,6 +4,8 @@ import { fetch } from '@nrwl/angular';
 
 import * as TasksActions from './tasks.actions';
 import * as TasksFeature from './tasks.reducer';
+import { TasksFakeApiService } from '../tasks-fake-api.service';
+import { map } from 'rxjs';
 
 @Injectable()
 export class TasksEffects {
@@ -13,41 +15,37 @@ export class TasksEffects {
       fetch({
         run: (action) => {
           // Your custom service 'load' logic goes here. For now just return a success action...
-          return TasksActions.loadTasksSuccess({ tasks: [
-              {
-                id: '01',
-                name: 'Foo',
-                status: 'todo',
-              },
-              {
-                id: '02',
-                name: 'Bar',
-                status: 'inProgress',
-              },
-              {
-                id: '03',
-                name: 'Wololo',
-                status: 'blocked',
-              },
-              {
-                id: '04',
-                name: 'Task 04',
-                status: 'done',
-              },
-              {
-                id: '05',
-                name: 'Yolo',
-                status: 'inProgress',
-              },
-            ] });
+          // return TasksActions.loadTasksSuccess({ tasks: [] });
+          return this.fakeAPI
+            .loadTasks()
+            .pipe(map((tasks) => TasksActions.loadTasksSuccess({ tasks })));
         },
         onError: (action, error) => {
-          console.error('Error', error);
+          console.error('Error init$: ', error);
           return TasksActions.loadTasksFailure({ error });
         },
       })
     )
   );
 
-  constructor(private readonly actions$: Actions) {}
+  createTask$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.createTask),
+      fetch({
+        run: (action) =>
+          this.fakeAPI
+            .createTask(action.name)
+            .pipe(map((task) => TasksActions.createTaskSuccess({ task }))),
+        onError: (action, error) => {
+          console.error('Error createTask$: ', error);
+          return TasksActions.createTaskFailure({ error });
+        },
+      })
+    )
+  );
+
+  constructor(
+    private readonly actions$: Actions,
+    private readonly fakeAPI: TasksFakeApiService
+  ) {}
 }

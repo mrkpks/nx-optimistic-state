@@ -32,7 +32,44 @@ const tasksReducer = createReducer(
   on(TasksActions.loadTasksSuccess, (state, { tasks }) =>
     tasksAdapter.setAll(tasks, { ...state, loaded: true })
   ),
-  on(TasksActions.loadTasksFailure, (state, { error }) => ({ ...state, error }))
+  on(TasksActions.loadTasksFailure, (state, { error }) => ({
+    ...state,
+    error,
+  })),
+  on(TasksActions.createTask, (state) => ({
+    ...state,
+    loaded: false,
+    error: null,
+  })),
+  on(TasksActions.createTaskOptimistic, (state) => ({
+    ...state,
+    loaded: false,
+    error: null,
+  })), // todo: loaded: true?
+  on(TasksActions.createTaskSuccess, (state, { task }) =>
+    tasksAdapter.setOne(task, { ...state, loaded: true })
+  ),
+  on(TasksActions.createTaskFailure, (state, { error }) => ({
+    ...state,
+    error,
+  })), // todo: set loaded?
+  on(TasksActions.deleteTask, (state) => ({
+    ...state,
+    loaded: false,
+    error: null,
+  })),
+  on(TasksActions.deleteTaskOptimistic, (state) => ({
+    ...state,
+    loaded: false,
+    error: null,
+  })),
+  on(TasksActions.deleteTaskSuccess, (state, { id }) =>
+    tasksAdapter.removeOne(id, { ...state, loaded: true })
+  ),
+  on(TasksActions.deleteTaskFailure, (state, { error }) => ({
+    ...state,
+    error,
+  })), // todo: set loaded?
 );
 
 export function reducer(state: State | undefined, action: Action) {

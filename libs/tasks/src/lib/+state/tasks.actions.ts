@@ -13,8 +13,14 @@ export const loadTasksFailure = createAction(
   props<{ error: any }>()
 );
 
+// todo: add more fields for create actions if needed
 export const createTask = createAction(
   'Tasks/API Create Task',
+  props<{ name: string }>()
+);
+
+export const createTaskOptimistic = createAction(
+  'Tasks/API Create Task Optimistic',
   props<{ name: string }>()
 );
 
