@@ -6,6 +6,7 @@ import * as TasksActions from './tasks.actions';
 import * as TasksFeature from './tasks.reducer';
 import { TasksFakeApiService } from '../tasks-fake-api.service';
 import { EMPTY, map, switchMap } from 'rxjs';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Injectable()
 export class TasksEffects {
@@ -22,6 +23,7 @@ export class TasksEffects {
         },
         onError: (action, error) => {
           console.error('Error init$: ', error);
+          this.message.error('Could not load tasks');
           return TasksActions.loadTasksFailure({ error });
         },
       })
@@ -37,26 +39,52 @@ export class TasksEffects {
             .createTask(action.name, action.status)
             .pipe(map((task) => TasksActions.createTaskSuccess({ task }))),
         onError: (action, error) => {
-          console.error('Error createTask$: ', error); // todo call notification service
+          console.error('Error createTask$: ', error);
+          this.message.error('Could not create task');
           return TasksActions.createTaskFailure({ error });
         },
       })
     )
   );
 
-  // This principle doesn't make sense if we don't know the ID coming from API
-  // though, can be used for deletion
+  // This would be OK if the ID generated from BE would be the same as on FE
+  // createTaskOptimistic$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(TasksActions.createTaskOptimistic),
+  //     optimisticUpdate({
+  //       run: (action) =>
+  //         this.fakeAPI
+  //           .createTask(action.task.name, action.task.status)
+  //           // .pipe(mapTo(TasksActions.createTaskSuccess({ task: action.task }))),
+  //           .pipe(switchMap(() => EMPTY)),
+  //       undoAction: (action, error) => {
+  //         console.error('Error createTask$: ', error);
+  //         this.message.error('Could not create task');
+  //         return TasksActions.undoCreateTask({
+  //           error,
+  //           id: action.task.id,
+  //         });
+  //       },
+  //     })
+  //   )
+  // );
+
   createTaskOptimistic$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.createTaskOptimistic),
       optimisticUpdate({
         run: (action) =>
-          this.fakeAPI
-            .createTask(action.task.name, action.task.status)
-            // .pipe(mapTo(TasksActions.createTaskSuccess({ task: action.task }))),
-            .pipe(switchMap(() => EMPTY)),
+          this.fakeAPI.createTask(action.task.name, action.task.status).pipe(
+            map((task) =>
+              TasksActions.createTaskOptimisticSuccess({
+                OID: action.task.id,
+                task,
+              })
+            )
+          ),
         undoAction: (action, error) => {
-          console.error('Error createTask$: ', error); // todo call notification service
+          console.error('Error createTask$: ', error);
+          this.message.error('Could not create task');
           return TasksActions.undoCreateTask({
             error,
             id: action.task.id,
@@ -66,38 +94,17 @@ export class TasksEffects {
     )
   );
 
-  // createTaskOptimistic$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(TasksActions.createTaskOptimistic),
-  //     optimisticUpdate({
-  //       run: (action) =>
-  //         this.fakeAPI.createTask(action.task.name, action.task.status).pipe(
-  //           map((task) =>
-  //             TasksActions.createTaskOptimisticSuccess({
-  //               OID: action.task.id,
-  //               task,
-  //             })
-  //           )
-  //         ),
-  //       undoAction: (action, error) => {
-  //         console.error('Error createTask$: ', error); // todo call notification service
-  //         return TasksActions.createTaskOptimisticFailure({
-  //           error,
-  //           id: action.task.id,
-  //         });
-  //       },
-  //     })
-  //   )
-  // );
-
   deleteTaskOptimistic$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.deleteTaskOptimistic),
       optimisticUpdate({
         run: ({ task }) =>
           this.fakeAPI.deleteTask(task.id).pipe(switchMap(() => EMPTY)),
+        // this.fakeAPI.deleteTask(task.id).pipe(mapTo(TasksActions.deleteTaskSuccess({id: task.id}))),
         undoAction: ({ task }, error) => {
-          console.error('Error deleteTask$: ', error); // todo call notification service
+          console.error('Error deleteTask$: ', error);
+
+          this.message.error('Could not delete task');
           return TasksActions.undoDeleteTask({
             error,
             task,
@@ -109,6 +116,7 @@ export class TasksEffects {
 
   constructor(
     private readonly actions$: Actions,
-    private readonly fakeAPI: TasksFakeApiService
+    private readonly fakeAPI: TasksFakeApiService,
+    private readonly message: NzMessageService
   ) {}
 }

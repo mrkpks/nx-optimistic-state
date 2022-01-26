@@ -43,6 +43,7 @@ export class TasksFakeApiService {
 
     const createSuccess = Math.random() > 0.5;
     if (createSuccess) {
+      console.warn('API: createTask OK');
       return of({
         id,
         name,
@@ -60,6 +61,7 @@ export class TasksFakeApiService {
   deleteTask(id: string, fakeProcessTime = 5000): Observable<string> {
     const deleteSuccess = Math.random() > 0.5;
     if (deleteSuccess) {
+      console.warn('API: deleteTask OK');
       return of(id).pipe(delay(fakeProcessTime));
     } else {
       console.warn('Brace yourself, API will throw an error');

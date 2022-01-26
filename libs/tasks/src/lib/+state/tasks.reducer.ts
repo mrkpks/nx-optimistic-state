@@ -48,21 +48,21 @@ const tasksReducer = createReducer(
   on(TasksActions.createTaskFailure, (state, { error }) => ({
     ...state,
     error,
-  })), // todo: set loaded: true when error handling ready
+  })),
   // OPTIMISTIC UX WHEN CREATING TASK
   on(TasksActions.createTaskOptimistic, (state, { task }) =>
     tasksAdapter.setOne(task, { ...state, loaded: true })
   ),
-  // on(TasksActions.createTaskOptimisticSuccess, (state, { OID, task }) =>
-  //   // needs to update ID (and potentially other data coming from BE)
-  //   {
-  //     console.log('createTaskOptimisticSuccess: ', OID, task.id);
-  //     return tasksAdapter.updateOne(
-  //       { id: OID, changes: task },
-  //       { ...state, loaded: true }
-  //     );
-  //   }
-  // ),
+  on(TasksActions.createTaskOptimisticSuccess, (state, { OID, task }) =>
+    // needs to update ID (and potentially other data coming from BE)
+    {
+      console.log('createTaskOptimisticSuccess: ', OID, task.id);
+      return tasksAdapter.updateOne(
+        { id: OID, changes: task },
+        { ...state, loaded: true }
+      );
+    }
+  ),
   on(TasksActions.undoCreateTask, (state, { id }) =>
     tasksAdapter.removeOne(id, { ...state, loaded: true })
   ),
@@ -71,15 +71,15 @@ const tasksReducer = createReducer(
     loaded: false,
     error: null,
   })),
-  on(TasksActions.deleteTaskOptimistic, (state, { task }) =>
-    tasksAdapter.removeOne(task.id, { ...state, loaded: true })),
   on(TasksActions.deleteTaskSuccess, (state, { id }) =>
     tasksAdapter.removeOne(id, { ...state, loaded: true })
   ),
   on(TasksActions.deleteTaskFailure, (state, { error }) => ({
     ...state,
     error,
-  })), // todo: set loaded: true when error handling ready
+  })),
+  on(TasksActions.deleteTaskOptimistic, (state, { task }) =>
+    tasksAdapter.removeOne(task.id, { ...state, loaded: true })),
   on(TasksActions.undoDeleteTask, (state, { task }) =>
     tasksAdapter.setOne(task, { ...state, loaded: true })
   ),
