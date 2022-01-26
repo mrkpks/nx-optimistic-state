@@ -4,7 +4,7 @@ import { select, Store } from '@ngrx/store';
 import * as TasksActions from './tasks.actions';
 import * as TasksFeature from './tasks.reducer';
 import * as TasksSelectors from './tasks.selectors';
-import { TaskStatus } from './tasks.models';
+import { TasksEntity, TaskStatus } from './tasks.models';
 import { take } from 'rxjs';
 
 @Injectable()
@@ -32,9 +32,7 @@ export class TasksFacade {
   }
 
   createTaskOptimistic(name: string, status?: TaskStatus): void {
-    const optimisticId = `O-${Math.floor(
-      Math.random() * 1000
-    )}`;
+    const optimisticId = `O-${Math.floor(Math.random() * 1000)}`;
     this.store.dispatch(
       TasksActions.createTaskOptimistic({
         task: { id: optimisticId, name, status },
@@ -52,6 +50,18 @@ export class TasksFacade {
       .subscribe((task) => {
         if (task) {
           this.store.dispatch(TasksActions.deleteTaskOptimistic({ task }));
+        }
+      });
+  }
+
+  updateTaskOptimistic(task: TasksEntity): void {
+    this.store
+      .pipe(select(TasksSelectors.getTaskById(task.id)), take(1))
+      .subscribe((old) => {
+        if (old) {
+          this.store.dispatch(
+            TasksActions.updateTaskOptimistic({ old, updated: task })
+          );
         }
       });
   }

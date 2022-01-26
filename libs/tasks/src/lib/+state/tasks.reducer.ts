@@ -83,6 +83,19 @@ const tasksReducer = createReducer(
   ),
   on(TasksActions.undoDeleteTask, (state, { error, task }) =>
     tasksAdapter.setOne(task, { ...state, loaded: true, error })
+  ),
+  // OPTIMISTIC UX WHEN UPDATING TASK
+  on(TasksActions.updateTaskOptimistic, (state, { updated }) =>
+    tasksAdapter.updateOne(
+      { id: updated.id, changes: updated },
+      { ...state, loaded: true, error: null }
+    )
+  ),
+  on(TasksActions.undoUpdateTask, (state, { old }) =>
+    tasksAdapter.updateOne(
+      { id: old.id, changes: old },
+      { ...state, loaded: true, error: null }
+    )
   )
 );
 

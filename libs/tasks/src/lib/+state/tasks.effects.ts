@@ -104,6 +104,24 @@ export class TasksEffects {
     )
   );
 
+  updateTaskOptimistic$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.updateTaskOptimistic),
+      optimisticUpdate({
+        run: ({ updated }) =>
+          this.fakeAPI.updateTask(updated).pipe(switchMap(() => EMPTY)),
+        undoAction: ({ old }, error) => {
+          console.error('Error deleteTask$: ', error);
+          this.message.error('Could not update task');
+          return TasksActions.undoUpdateTask({
+            error,
+            old,
+          });
+        },
+      })
+    )
+  );
+
   constructor(
     private readonly actions$: Actions,
     private readonly message: NzMessageService,

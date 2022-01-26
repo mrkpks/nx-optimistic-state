@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import {TasksEntity, TaskStatus} from './tasks.models';
+import { TasksEntity, TaskStatus } from './tasks.models';
 
 export const init = createAction('[Tasks Page] Init');
 
@@ -19,7 +19,7 @@ export const loadTasksFailure = createAction(
  */
 export const createTask = createAction(
   'Tasks/API Create Task',
-  props<{ name: string, status?: TaskStatus }>()
+  props<{ name: string; status?: TaskStatus }>()
 );
 
 export const createTaskSuccess = createAction(
@@ -65,12 +65,12 @@ export const createTaskOptimistic = createAction(
 export const createTaskOptimisticSuccess = createAction(
   'Tasks/API Create Task Optimistic Success',
   // OID - ID created on FE, to be replaced in store
-  props<{ OID: string, task: TasksEntity }>()
+  props<{ OID: string; task: TasksEntity }>()
 );
 
 export const undoCreateTask = createAction(
   'Tasks/API Create Task Optimistic Failure',
-  props<{ error: any, id: string }>() // either whole entity or ID to revert (remove from state)
+  props<{ error: any; id: string }>() // either whole entity or ID to revert (remove from state)
 );
 
 /**
@@ -84,8 +84,15 @@ export const deleteTaskOptimistic = createAction(
 
 export const undoDeleteTask = createAction(
   'Tasks/API Delete Task Optimistic Failure',
-  props<{ error: any, task: TasksEntity }>() // task to revert
+  props<{ error: any; task: TasksEntity }>() // task to revert
 );
 
-// TODO: add edit actions
-// !!! undoEditTask should need the whole original entity to revert edited fields
+export const updateTaskOptimistic = createAction(
+  'Tasks/API Update Task Optimistic',
+  props<{ old: TasksEntity; updated: TasksEntity }>()
+);
+
+export const undoUpdateTask = createAction(
+  'Tasks/API Update Task Optimistic Failure',
+  props<{ error: any; old: TasksEntity }>() // task to revert
+);

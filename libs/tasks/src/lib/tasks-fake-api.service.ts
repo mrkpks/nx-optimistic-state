@@ -71,4 +71,19 @@ export class TasksFakeApiService {
       return timer(fakeProcessTime).pipe(mergeMap(() => throwingObservable));
     }
   }
+
+  updateTask(task: TasksEntity, fakeProcessTime = 2500): Observable<TasksEntity> {
+    const editSuccess = Math.random() > 0.5;
+
+    if (editSuccess) {
+      console.warn('API: updateTask OK');
+      return of(task).pipe(delay(fakeProcessTime));
+    } else {
+      console.warn('Brace yourself, API will throw an error');
+      const throwingObservable = throwError(
+        () => 'API ERROR: Could not update task'
+      );
+      return timer(fakeProcessTime).pipe(mergeMap(() => throwingObservable));
+    }
+  }
 }

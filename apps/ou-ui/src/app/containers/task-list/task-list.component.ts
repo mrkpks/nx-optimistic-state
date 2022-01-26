@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TasksFacade, TaskStatus } from '@nx-optimistic-state/tasks';
-import { BehaviorSubject } from 'rxjs';
+import {BehaviorSubject, take} from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 enum TaskFormField {
@@ -24,6 +24,8 @@ export class TaskListComponent {
 
   readonly taskStatuses = Object.values(TaskStatus);
 
+  mode: 'create' | 'edit' = 'create';
+
   taskForm!: FormGroup;
 
   createDrawerVisible = false;
@@ -40,11 +42,27 @@ export class TaskListComponent {
     });
   }
 
-  openCreateDrawer(): void {
+  openTaskDrawer(mode = 'create'): void {
+    if (mode === 'edit') {
+      this.mode = 'edit';
+      // todo refactor this monstrosity to use facade selector:D
+      this.allTasks$.pipe(take(1)).subscribe(tasks => {
+        const selectedTask = tasks.find(task => task.id === this.selectedId$.value);
+
+        if (selectedTask) {
+          this.taskForm.patchValue({
+            [TaskFormField.Name]: selectedTask.name,
+            [TaskFormField.Status]: selectedTask.status,
+          });
+        }
+      })
+    } else {
+      this.mode = 'create';
+    }
     this.createDrawerVisible = true;
   }
 
-  closeCreateDrawer(): void {
+  closeTaskDrawer(): void {
     this.createDrawerVisible = false;
     this.taskForm.patchValue({
       [TaskFormField.Name]: null,
@@ -57,7 +75,7 @@ export class TaskListComponent {
       this.taskForm.controls[TaskFormField.Name].value,
       this.taskForm.controls[TaskFormField.Status].value
     );
-    this.closeCreateDrawer();
+    this.closeTaskDrawer();
   }
 
   createTaskOptimistic(): void {
@@ -65,7 +83,7 @@ export class TaskListComponent {
       this.taskForm.controls[TaskFormField.Name].value,
       this.taskForm.controls[TaskFormField.Status].value
     );
-    this.closeCreateDrawer();
+    this.closeTaskDrawer();
   }
 
   goToDetail(id: string): void {
@@ -84,6 +102,19 @@ export class TaskListComponent {
     if (id) {
       this.tasksFacade.deleteTaskOptimistic(id);
     }
+  }
+
+  updateTaskOptimistic(): void {
+    const id = this.selectedId$.value;
+    if (id) {
+      const task = {
+        id,
+        name: this.taskForm.controls['name'].value,
+        status: this.taskForm.controls['status'].value,
+      };
+      this.tasksFacade.updateTaskOptimistic(task);
+    }
+    this.closeTaskDrawer();
   }
 
   changeSelectedId(event: Event, id: string): void {
