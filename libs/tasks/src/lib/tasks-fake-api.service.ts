@@ -58,7 +58,7 @@ export class TasksFakeApiService {
     }
   }
 
-  deleteTask(id: string, fakeProcessTime = 5000): Observable<string> {
+  deleteTask(id: string, fakeProcessTime = 2500): Observable<string> {
     const deleteSuccess = Math.random() > 0.5;
     if (deleteSuccess) {
       console.warn('API: deleteTask OK');

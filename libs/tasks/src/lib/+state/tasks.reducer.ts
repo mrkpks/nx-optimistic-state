@@ -75,6 +75,7 @@ const tasksReducer = createReducer(
   on(TasksActions.deleteTaskFailure, (state, { error }) => ({
     ...state,
     error,
+    loaded: true,
   })),
   // OPTIMISTIC UX WHEN CREATING TASK
   on(TasksActions.deleteTaskOptimistic, (state, { task }) =>

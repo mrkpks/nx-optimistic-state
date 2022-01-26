@@ -51,13 +51,16 @@ export class TasksEffects {
       ofType(TasksActions.createTaskOptimistic),
       optimisticUpdate({
         run: (action) =>
-          this.fakeAPI
-            .createTask(action.task.name, action.task.status)
-            .pipe(
-              tap(() => this.message.success('Task created')),
-              // needs another action for replacing optimistic ID
-              map((task) => TasksActions.createTaskOptimisticSuccess({ OID: action.task.id, task }))
-            ),
+          this.fakeAPI.createTask(action.task.name, action.task.status).pipe(
+            tap(() => this.message.success('Task created')),
+            // needs another action for replacing optimistic ID
+            map((task) =>
+              TasksActions.createTaskOptimisticSuccess({
+                OID: action.task.id,
+                task,
+              })
+            )
+          ),
         undoAction: (action, error) => {
           this.message.error('Error creating task');
           return TasksActions.undoCreateTask({
@@ -92,16 +95,31 @@ export class TasksEffects {
   //   )
   // );
 
+  deleteTask$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.deleteTask),
+      fetch({
+        run: ({ id }) =>
+          this.fakeAPI
+            .deleteTask(id)
+            .pipe(map((id) => TasksActions.deleteTaskSuccess({ id }))),
+        onError: (action, error) => {
+          console.error('Error deleteTask$: ', error);
+          this.message.error('Could not delete task');
+          return TasksActions.deleteTaskFailure({ error });
+        },
+      })
+    )
+  );
+
   deleteTaskOptimistic$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.deleteTaskOptimistic),
       optimisticUpdate({
         run: ({ task }) =>
           this.fakeAPI.deleteTask(task.id).pipe(switchMap(() => EMPTY)),
-        // this.fakeAPI.deleteTask(task.id).pipe(mapTo(TasksActions.deleteTaskSuccess({id: task.id}))),
         undoAction: ({ task }, error) => {
           console.error('Error deleteTask$: ', error);
-
           this.message.error('Could not delete task');
           return TasksActions.undoDeleteTask({
             error,
@@ -115,6 +133,6 @@ export class TasksEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly message: NzMessageService,
-    private readonly fakeAPI: TasksFakeApiService,
+    private readonly fakeAPI: TasksFakeApiService
   ) {}
 }
