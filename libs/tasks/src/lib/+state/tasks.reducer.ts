@@ -30,23 +30,24 @@ const tasksReducer = createReducer(
   initialState,
   on(TasksActions.init, (state) => ({ ...state, loaded: false, error: null })),
   on(TasksActions.loadTasksSuccess, (state, { tasks }) =>
-    tasksAdapter.setAll(tasks, { ...state, loaded: true })
+    tasksAdapter.setAll(tasks, { ...state, loaded: true, error: null })
   ),
   on(TasksActions.loadTasksFailure, (state, { error }) => ({
     ...state,
+    loaded: true,
     error,
   })),
   // WAIT FOR BE WHEN CREATING TASK
   on(TasksActions.createTask, (state) => ({
     ...state,
     loaded: false,
-    error: null,
   })),
   on(TasksActions.createTaskSuccess, (state, { task }) =>
-    tasksAdapter.setOne(task, { ...state, loaded: true })
+    tasksAdapter.setOne(task, { ...state, loaded: true, error: null })
   ),
   on(TasksActions.createTaskFailure, (state, { error }) => ({
     ...state,
+    loaded: true,
     error,
   })),
   // OPTIMISTIC UX WHEN CREATING TASK
@@ -55,20 +56,18 @@ const tasksReducer = createReducer(
   ),
   on(TasksActions.createTaskOptimisticSuccess, (state, { OID, task }) =>
     // needs to update ID (and potentially other data coming from BE)
-    {
-      return tasksAdapter.updateOne(
-        { id: OID, changes: task },
-        { ...state, loaded: true }
-      );
-    }
+    tasksAdapter.updateOne(
+      { id: OID, changes: task },
+      { ...state, loaded: true, error: null }
+    )
   ),
-  on(TasksActions.undoCreateTask, (state, { id }) =>
-    tasksAdapter.removeOne(id, { ...state, loaded: true })
+  on(TasksActions.undoCreateTask, (state, { error, id }) =>
+    tasksAdapter.removeOne(id, { ...state, loaded: true, error })
   ),
+  // WAIT FOR BE WHEN DELETING TASK
   on(TasksActions.deleteTask, (state) => ({
     ...state,
     loaded: false,
-    error: null,
   })),
   on(TasksActions.deleteTaskSuccess, (state, { id }) =>
     tasksAdapter.removeOne(id, { ...state, loaded: true })
@@ -77,11 +76,13 @@ const tasksReducer = createReducer(
     ...state,
     error,
   })),
+  // OPTIMISTIC UX WHEN CREATING TASK
   on(TasksActions.deleteTaskOptimistic, (state, { task }) =>
-    tasksAdapter.removeOne(task.id, { ...state, loaded: true })),
-  on(TasksActions.undoDeleteTask, (state, { task }) =>
-    tasksAdapter.setOne(task, { ...state, loaded: true })
+    tasksAdapter.removeOne(task.id, { ...state, loaded: true })
   ),
+  on(TasksActions.undoDeleteTask, (state, { error, task }) =>
+    tasksAdapter.setOne(task, { ...state, loaded: true, error })
+  )
 );
 
 export function reducer(state: State | undefined, action: Action) {

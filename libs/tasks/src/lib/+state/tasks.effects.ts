@@ -46,8 +46,6 @@ export class TasksEffects {
     )
   );
 
-  // This principle doesn't make sense if we don't know the ID coming from API
-  // though, can be used for deletion
   createTaskOptimistic$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.createTaskOptimistic),
@@ -56,7 +54,8 @@ export class TasksEffects {
           this.fakeAPI
             .createTask(action.task.name, action.task.status)
             .pipe(
-              tap(() => this.message.success('task created')),
+              tap(() => this.message.success('Task created')),
+              // needs another action for replacing optimistic ID
               map((task) => TasksActions.createTaskOptimisticSuccess({ OID: action.task.id, task }))
             ),
         undoAction: (action, error) => {
@@ -70,6 +69,8 @@ export class TasksEffects {
     )
   );
 
+  // This principle doesn't make sense if we don't know the ID coming from API
+  // though, can be used for deletion
   // createTaskOptimistic$ = createEffect(() =>
   //   this.actions$.pipe(
   //     ofType(TasksActions.createTaskOptimistic),
