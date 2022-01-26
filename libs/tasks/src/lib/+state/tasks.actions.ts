@@ -13,6 +13,10 @@ export const loadTasksFailure = createAction(
   props<{ error: any }>()
 );
 
+/**
+ * Classic approach using a loading flag on FE and waiting for BE response to show the result
+ * With this approach, 3 Actions are always necessary (trigger [e.g. create, delete], success, failure)
+ */
 export const createTask = createAction(
   'Tasks/API Create Task',
   props<{ name: string, status?: TaskStatus }>()
@@ -28,6 +32,31 @@ export const createTaskFailure = createAction(
   props<{ error: any }>()
 );
 
+export const deleteTask = createAction(
+  'Tasks/API Delete Task',
+  props<{ id: string }>()
+);
+
+export const deleteTaskSuccess = createAction(
+  'Tasks/API Delete Task Success',
+  props<{ id: string }>()
+);
+
+export const deleteTaskFailure = createAction(
+  'Tasks/API Delete Task Failure',
+  props<{ error: any }>()
+);
+
+/**
+ * OPTIMISTIC UPDATES
+ */
+
+/**
+ * Optimistic task creation requires special approach since we don't know the ID that will be generated on BE
+ * Therefore it requires not just 2 (create, undo) but 3 Actions (create, success, undo)
+ *
+ * - we shall store the "optimistically" created with FE-generated ID and replace it in the Success Action after
+ */
 export const createTaskOptimistic = createAction(
   'Tasks/API Create Task Optimistic',
   props<{ task: TasksEntity }>()
@@ -44,24 +73,13 @@ export const undoCreateTask = createAction(
   props<{ error: any, id: string }>() // either whole entity or ID to revert (remove from state)
 );
 
-export const deleteTask = createAction(
-  'Tasks/API Delete Task',
-  props<{ id: string }>()
-);
-
+/**
+ * Optimistic task deletion is a straightforward operation that doesn't expect different output from BE
+ * Therefore it requires just 2 Actions (delete, undo)
+ */
 export const deleteTaskOptimistic = createAction(
   'Tasks/API Delete Task Optimistic',
   props<{ task: TasksEntity }>()
-);
-
-export const deleteTaskSuccess = createAction(
-  'Tasks/API Delete Task Success',
-  props<{ id: string }>()
-);
-
-export const deleteTaskFailure = createAction(
-  'Tasks/API Delete Task Failure',
-  props<{ error: any }>()
 );
 
 export const undoDeleteTask = createAction(
@@ -70,4 +88,4 @@ export const undoDeleteTask = createAction(
 );
 
 // TODO: add edit actions
-// !!! editTaskOptimisticFailure should need the whole entity in action to revert edited fields
+// !!! undoEditTask should need the whole original entity to revert edited fields
