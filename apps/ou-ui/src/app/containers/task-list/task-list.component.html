@@ -18,10 +18,11 @@
     <tr
       *ngFor="let task of tasksTable.data"
       class="task-row"
+      [class.optimistic]="task.id.startsWith('O-')"
       (click)="goToDetail(task.id)"
     >
-      <td nzAlign="center" nzBreakWord>{{ task.id }}</td>
-      <td nzAlign="center" nzBreakWord>{{ task.name }}</td>
+      <td style="width: 125px" nzAlign="left" nzBreakWord>{{ task.id }}</td>
+      <td nzAlign="left" nzBreakWord>{{ task.name }}</td>
       <td nzAlign="center">
         <div class="status-dot-wrapper">
           <div class="status-dot" [ngClass]="getStatusColor(task.status)">

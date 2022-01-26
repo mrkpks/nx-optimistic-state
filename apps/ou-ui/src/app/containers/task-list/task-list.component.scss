@@ -25,6 +25,14 @@
   border-radius: 50%;
 }
 
+.task-row {
+  &.optimistic {
+    background-color: rgba(0,0,0,0.5);
+    user-select: none;
+    pointer-events: none;
+  }
+}
+
 .table-row {
   cursor: pointer;
 }

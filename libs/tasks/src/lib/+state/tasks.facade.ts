@@ -32,7 +32,7 @@ export class TasksFacade {
   }
 
   createTaskOptimistic(name: string, status?: TaskStatus): void {
-    const optimisticId = `OPTIMISITC_${name}-${Math.floor(
+    const optimisticId = `O-${Math.floor(
       Math.random() * 1000
     )}`;
     this.store.dispatch(

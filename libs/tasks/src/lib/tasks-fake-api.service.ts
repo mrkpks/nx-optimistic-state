@@ -37,7 +37,7 @@ export class TasksFakeApiService {
   createTask(
     name: string,
     status?: TaskStatus,
-    fakeProcessTime = 5000
+    fakeProcessTime = 1250
   ): Observable<TasksEntity> {
     const id = `${name}-${Math.floor(Math.random() * 1000)}`;
 

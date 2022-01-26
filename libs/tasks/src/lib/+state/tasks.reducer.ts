@@ -56,7 +56,6 @@ const tasksReducer = createReducer(
   on(TasksActions.createTaskOptimisticSuccess, (state, { OID, task }) =>
     // needs to update ID (and potentially other data coming from BE)
     {
-      console.log('createTaskOptimisticSuccess: ', OID, task.id);
       return tasksAdapter.updateOne(
         { id: OID, changes: task },
         { ...state, loaded: true }

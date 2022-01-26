@@ -7,12 +7,14 @@ import { TasksEffects } from './+state/tasks.effects';
 import { TasksFacade } from './+state/tasks.facade';
 import { TasksFakeApiService } from './tasks-fake-api.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 
 @NgModule({
   imports: [
     CommonModule,
     StoreModule.forFeature(fromTasks.TASKS_FEATURE_KEY, fromTasks.reducer),
     EffectsModule.forFeature([TasksEffects]),
+    NzMessageModule,
   ],
   providers: [TasksFacade, TasksFakeApiService, NzMessageService],
 })
