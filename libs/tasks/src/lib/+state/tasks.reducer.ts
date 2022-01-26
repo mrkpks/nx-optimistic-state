@@ -7,7 +7,7 @@ import { TasksEntity } from './tasks.models';
 export const TASKS_FEATURE_KEY = 'tasks';
 
 export interface State extends EntityState<TasksEntity> {
-  selectedId?: string | number; // which Tasks record has been selected
+  selectedId?: string; // which Tasks record has been selected
   loaded: boolean; // has the Tasks list been loaded
   error?: string | null; // last known error (if any)
 }
@@ -28,6 +28,7 @@ export const initialState: State = tasksAdapter.getInitialState({
 
 const tasksReducer = createReducer(
   initialState,
+  on(TasksActions.setSelectedId, (state, { id }) => ({ ...state, selectedId: id })),
   on(TasksActions.init, (state) => ({ ...state, loaded: false, error: null })),
   on(TasksActions.loadTasksSuccess, (state, { tasks }) =>
     tasksAdapter.setAll(tasks, { ...state, loaded: true, error: null })

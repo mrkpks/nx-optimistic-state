@@ -1,6 +1,11 @@
 import { createAction, props } from '@ngrx/store';
 import { TasksEntity, TaskStatus } from './tasks.models';
 
+export const setSelectedId = createAction(
+  '[Tasks] Set Selected Task ID',
+  props<{ id: string }>()
+);
+
 export const init = createAction('[Tasks Page] Init');
 
 export const loadTasksSuccess = createAction(

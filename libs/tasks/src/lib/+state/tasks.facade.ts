@@ -15,6 +15,7 @@ export class TasksFacade {
    */
   loaded$ = this.store.pipe(select(TasksSelectors.getTasksLoaded));
   allTasks$ = this.store.pipe(select(TasksSelectors.getAllTasks));
+  selectedId$ = this.store.pipe(select(TasksSelectors.getSelectedId));
   selectedTasks$ = this.store.pipe(select(TasksSelectors.getSelected));
 
   constructor(private readonly store: Store) {}
@@ -23,8 +24,12 @@ export class TasksFacade {
    * Use the initialization action to perform one
    * or more tasks in your Effects.
    */
-  init() {
+  init(): void {
     this.store.dispatch(TasksActions.init());
+  }
+
+  setSelectedId(id: string): void {
+    this.store.dispatch(TasksActions.setSelectedId({ id }));
   }
 
   createTask(name: string, status?: TaskStatus): void {
@@ -40,18 +45,20 @@ export class TasksFacade {
     );
   }
 
-  deleteTask(id: string): void {
-    this.store.dispatch(TasksActions.deleteTask({ id }));
+  deleteTask(): void {
+    this.selectedId$.pipe(take(1)).subscribe((id) => {
+      if (id) {
+        this.store.dispatch(TasksActions.deleteTask({ id }));
+      }
+    });
   }
 
-  deleteTaskOptimistic(id: string): void {
-    this.store
-      .pipe(select(TasksSelectors.getTaskById(id)), take(1))
-      .subscribe((task) => {
-        if (task) {
-          this.store.dispatch(TasksActions.deleteTaskOptimistic({ task }));
-        }
-      });
+  deleteTaskOptimistic(): void {
+    this.selectedTasks$.pipe(take(1)).subscribe((task) => {
+      if (task) {
+        this.store.dispatch(TasksActions.deleteTaskOptimistic({ task }));
+      }
+    });
   }
 
   updateTaskOptimistic(task: TasksEntity): void {

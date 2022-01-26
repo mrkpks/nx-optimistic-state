@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TasksFacade, TaskStatus } from '@nx-optimistic-state/tasks';
-import {BehaviorSubject, take} from 'rxjs';
+import { BehaviorSubject, take } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 enum TaskFormField {
@@ -14,11 +14,10 @@ enum TaskFormField {
   styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent {
-  private readonly selectedId$ = new BehaviorSubject<string | undefined>(
-    undefined
-  );
   readonly allTasks$ = this.tasksFacade.allTasks$;
   readonly tasksLoaded$ = this.tasksFacade.loaded$;
+  readonly selectedId$ = this.tasksFacade.selectedId$;
+  readonly selectedTask$ = this.tasksFacade.selectedTasks$;
 
   readonly TaskFormField = TaskFormField;
 
@@ -32,7 +31,7 @@ export class TaskListComponent {
 
   constructor(
     private readonly tasksFacade: TasksFacade,
-    private readonly fb: FormBuilder,
+    private readonly fb: FormBuilder
   ) {
     this.tasksFacade.init();
 
@@ -45,17 +44,14 @@ export class TaskListComponent {
   openTaskDrawer(mode = 'create'): void {
     if (mode === 'edit') {
       this.mode = 'edit';
-      // todo refactor this monstrosity to use facade selector:D
-      this.allTasks$.pipe(take(1)).subscribe(tasks => {
-        const selectedTask = tasks.find(task => task.id === this.selectedId$.value);
-
-        if (selectedTask) {
+      this.selectedTask$.pipe(take(1)).subscribe(task => {
+        if (task) {
           this.taskForm.patchValue({
-            [TaskFormField.Name]: selectedTask.name,
-            [TaskFormField.Status]: selectedTask.status,
+            [TaskFormField.Name]: task.name,
+            [TaskFormField.Status]: task.status,
           });
         }
-      })
+      });
     } else {
       this.mode = 'create';
     }
@@ -91,35 +87,30 @@ export class TaskListComponent {
   }
 
   deleteTask(): void {
-    const id = this.selectedId$.value;
-    if (id) {
-      this.tasksFacade.deleteTask(id);
-    }
+    this.tasksFacade.deleteTask();
   }
 
   deleteTaskOptimistic(): void {
-    const id = this.selectedId$.value;
-    if (id) {
-      this.tasksFacade.deleteTaskOptimistic(id);
-    }
+    this.tasksFacade.deleteTaskOptimistic();
   }
 
   updateTaskOptimistic(): void {
-    const id = this.selectedId$.value;
-    if (id) {
-      const task = {
-        id,
-        name: this.taskForm.controls['name'].value,
-        status: this.taskForm.controls['status'].value,
-      };
-      this.tasksFacade.updateTaskOptimistic(task);
-    }
+    this.selectedId$.pipe(take(1)).subscribe(id => {
+      if (id) {
+        const task = {
+          id,
+          name: this.taskForm.controls['name'].value,
+          status: this.taskForm.controls['status'].value,
+        };
+        this.tasksFacade.updateTaskOptimistic(task);
+      }
+    });
     this.closeTaskDrawer();
   }
 
   changeSelectedId(event: Event, id: string): void {
     event.stopPropagation();
-    this.selectedId$.next(id);
+    this.tasksFacade.setSelectedId(id);
   }
 
   getStatusColor(status?: 'todo' | 'inProgress' | 'done' | 'blocked'): string {
