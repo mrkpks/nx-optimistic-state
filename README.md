@@ -161,10 +161,10 @@ import * as TasksActions from './tasks.actions';
         run: (action) =>
           this.api.createTask(action.task.name, action.task.status).pipe(
             tap(() => this.message.success('Task created')),
-            // needs another action for replacing optimistic ID (OID)
+            // needs another action for replacing Optimistic ID (oid)
             map((task) =>
               TasksActions.createTaskOptimisticSuccess({
-                OID: action.task.id,
+                oid: action.task.id,
                 task,
               })
             )

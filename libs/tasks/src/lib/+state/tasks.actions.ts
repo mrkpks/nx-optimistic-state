@@ -69,8 +69,8 @@ export const createTaskOptimistic = createAction(
 
 export const createTaskOptimisticSuccess = createAction(
   'Tasks/API Create Task Optimistic Success',
-  // OID - ID created on FE, to be replaced in store
-  props<{ OID: string; task: TasksEntity }>()
+  // oid - ID created on FE, to be replaced in store
+  props<{ oid: string; task: TasksEntity }>()
 );
 
 export const undoCreateTask = createAction(
@@ -92,6 +92,10 @@ export const undoDeleteTask = createAction(
   props<{ error: any; task: TasksEntity }>() // task to revert
 );
 
+/**
+ * We need to pass both old and updated entities in case of an error coming from BE
+ * so we can revert the fields of optimistically updated entity by the original one
+ */
 export const updateTaskOptimistic = createAction(
   'Tasks/API Update Task Optimistic',
   props<{ old: TasksEntity; updated: TasksEntity }>()

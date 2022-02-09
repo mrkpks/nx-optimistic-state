@@ -55,10 +55,10 @@ const tasksReducer = createReducer(
   on(TasksActions.createTaskOptimistic, (state, { task }) =>
     tasksAdapter.setOne(task, { ...state, loaded: true })
   ),
-  on(TasksActions.createTaskOptimisticSuccess, (state, { OID, task }) =>
+  on(TasksActions.createTaskOptimisticSuccess, (state, { oid, task }) =>
     // needs to update ID (and potentially other data coming from BE)
     tasksAdapter.updateOne(
-      { id: OID, changes: task },
+      { id: oid, changes: task },
       { ...state, loaded: true, error: null }
     )
   ),
@@ -78,7 +78,7 @@ const tasksReducer = createReducer(
     error,
     loaded: true,
   })),
-  // OPTIMISTIC UX WHEN CREATING TASK
+  // OPTIMISTIC UX WHEN DELETING TASK
   on(TasksActions.deleteTaskOptimistic, (state, { task }) =>
     tasksAdapter.removeOne(task.id, { ...state, loaded: true })
   ),

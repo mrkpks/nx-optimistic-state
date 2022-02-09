@@ -70,7 +70,7 @@ export class TasksEffects {
             // needs success action for replacing optimistic ID
             map((task) =>
               TasksActions.createTaskOptimisticSuccess({
-                OID: action.task.id,
+                oid: action.task.id,
                 task,
               })
             )
